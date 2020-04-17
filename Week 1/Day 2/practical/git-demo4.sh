@@ -1,9 +1,17 @@
+# Sets up three git repos:
+#  gd4/team -- a repository where other team members work
+#  gd4/project.git -- a bare repository that doesn’t have a working directory
+#    * shared repository containig git metadata, history and snapshots
+#    * it is impossible to edit files and commit changes in it
+#    * no working tree -- can only work as a remote
+#  gd4/local -- user's own repository where only they work
+
 mkdir gd4
 cd gd4
 
 # make a remote repo
-mkdir _remote
-cd _remote
+mkdir team
+cd team
 
 git init
 touch C0 && git add C0 && git commit -m'C0'
@@ -11,11 +19,11 @@ touch C1 && git add C1 && git commit -m'C1'
 
 cd ..
 
-# make a bare relay repo
-git clone _remote remote.git --bare
+# make a bare repo that we will use like a repo on github
+git clone team project.git --bare
 
 # make a local repo
-git clone remote.git local
+git clone project.git local
 
 # add local work
 cd local
@@ -32,8 +40,8 @@ touch C6 && git add C6 && git commit -m'C6'
 touch C7 && git add C7 && git commit -m'C7'
 
 # add remote work
-cd ../_remote
-git remote add origin ../remote.git
+cd ../team
+git remote add origin ../project.git
 touch C8 && git add C8 && git commit -m'C8'
 git push -u origin master
 
