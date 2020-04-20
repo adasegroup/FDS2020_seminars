@@ -1,9 +1,5 @@
-Git Gud at Git Branching
-------------------------
+Seminar on Overcoming Fear of Git
+---------------------------------
 
-This is yet a draft.
-
-ToDo
-====
-
-Restructure maybe? or add other level for [learngitbranching](https://learngitbranching.js.org/)?
+The seminar covers the essential commands needed to operate in git, and uses
+[learngitbranching](https://learngitbranching.js.org/) game for illustration purposes.
