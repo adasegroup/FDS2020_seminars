@@ -1,3 +1,8 @@
+# Branches are work-in-progress, tags are milestones
+#  * try makind new branches and commit in them checkout, branch
+#  * try moving branch tips to other commits: branch, reset
+#  * try tagging and using `git describe`
+
 mkdir gd1
 cd gd1
 

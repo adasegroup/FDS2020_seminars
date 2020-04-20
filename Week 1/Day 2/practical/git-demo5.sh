@@ -1,3 +1,7 @@
+# show how different conflict messages look like
+#  * try rebasing yours onto theirs, then reset, and try vice versa
+#  * try merging yours into theirs, then reset, and try vice versa
+
 mkdir gd5
 cd gd5
 

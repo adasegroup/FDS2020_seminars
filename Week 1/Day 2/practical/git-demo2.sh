@@ -1,3 +1,6 @@
+# Try to make a branch with cabin approved backpack contents
+#  * use cherry-pick, checkout -b, rebase et c.
+#  * if you feel adventurous, see what `git bisect` does and try to find the first bad commit with it
 mkdir gd2
 cd gd2
 
@@ -31,7 +34,4 @@ git add backpack && git commit -m'power bank'
 >> backpack echo poster
 git add backpack && git commit -m'poster'
 
-# make a branch with cabin approved backpack contents
-# use cherry-pick and checkout -b
 
-# this is also an illustration for `git bisect`

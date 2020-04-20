@@ -1,3 +1,11 @@
+# golden rule of git: never rebase a shared branch! https://www.daolf.com/posts/git-series-part-2/
+
+# this is replica of the git tree in advanced1
+#  * on each step do rebase in [learngitbranching](https://learngitbranching.js.org/?gist_level_id=c54bbd01120cc35f9f8cbdd706f33102),
+#   then do the same in terminal, resolving conflicts and skipping if necessary.
+#  * then try the same with merge
+#  * if you want to restore a rebased branch under a different name, try `git reflog` to find the commit
+
 mkdir gd3
 cd gd3
 
@@ -38,11 +46,3 @@ git checkout -b bak-bugFix bugFix
 git checkout -b bak-master master
 git checkout -b mrg-master master
 git checkout master
-
-# on each step show rebase in learngitbranching, then do the same in terminal resolving conflicts and skipping if necessary
-
-# then address the question on dangling commits
-# https://stackoverflow.com/questions/18514659/git-what-is-a-dangling-commit-blob-and-where-do-they-come-from
-# git fsck, git gc, git reflog
-
-# golden rule of git: never rebase a shared branch! https://www.daolf.com/posts/git-series-part-2/

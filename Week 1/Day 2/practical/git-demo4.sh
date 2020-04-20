@@ -1,10 +1,14 @@
-# Sets up three git repos:
+# Sets up three git repos for [remoteAdvanced-1,2](https://learngitbranching.js.org/?gist_level_id=15c5500cf6623772f0a2c636c81eba0b):
 #  gd4/team -- a repository where other team members work
 #  gd4/project.git -- a bare repository that doesn’t have a working directory
-#    * shared repository containig git metadata, history and snapshots
+#    * shared repository containing git metadata, history and snapshots
 #    * it is impossible to edit files and commit changes in it
 #    * no working tree -- can only work as a remote
 #  gd4/local -- user's own repository where only they work
+
+# task:
+# * try solving the puzzle here
+# * then try to work in `team` repo and push changes from there
 
 mkdir gd4
 cd gd4
