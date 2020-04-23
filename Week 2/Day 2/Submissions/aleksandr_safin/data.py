@@ -7,15 +7,15 @@ import matplotlib.pyplot as plt
 from sklearn.preprocessing import OneHotEncoder
 from sklearn.preprocessing import LabelEncoder
 
-urls = [
-    "https://us.burberry.com/womens-new-arrivals-new-in/",
-    "https://us.burberry.com/womens-new-arrivals-new-in/?start=2&pageSize=120&productsOffset=&cellsOffset=8&cellsLimit=&__lang=en"
-]
 
-def get_data()
+def get_data():
+    burbery_urls = [
+        "https://us.burberry.com/womens-new-arrivals-new-in/",
+        "https://us.burberry.com/womens-new-arrivals-new-in/?start=2&pageSize=120&productsOffset=&cellsOffset=8&cellsLimit=&__lang=en"
+    ]
     # SCRAPING & CREATING A LIST OF LINKS
     doc = []
-    for url in urls:
+    for url in burbery_urls:
         r = requests.get(url)
         html_doc = r.text
         soup = BeautifulSoup(html_doc)
