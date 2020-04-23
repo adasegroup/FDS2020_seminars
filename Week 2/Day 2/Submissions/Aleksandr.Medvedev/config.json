@@ -1,0 +1,27 @@
+{
+    "brands": {
+            "versace": {
+                "https://www.versace.com/us/en-us/women/new-arrivals/new-in/"
+            },
+            "d&g": [
+                "https://us.dolcegabbana.com/en/women/highlights/new-in/?page=1",
+                "https://us.dolcegabbana.com/en/women/highlights/new-in/?page=2",
+                "https://us.dolcegabbana.com/en/women/highlights/new-in/?page=3",
+                "https://us.dolcegabbana.com/en/women/highlights/new-in/?page=4"
+            ],
+            "burberry": [
+                "https://us.burberry.com/womens-new-arrivals-new-in/",
+                "https://us.burberry.com/womens-new-arrivals-new-in/?start=2&pageSize=120&productsOffset=&cellsOffset=8&cellsLimit=&__lang=en"
+            ]
+    },
+    "models": {
+        "Dummy": [{"strategy": "prior"}],
+        "SVC": [{"C": 1.00}, {"C": 0.25}, {"C": 4.00}],
+        "RandomForest": [{"n_estimators": 100}],
+        "LogisticRegression": [{"C": "1.00", "solver": "liblinear", "penalty": "l1"}, 
+                         {"C": "0.25", "solver": "liblinear", "penalty": "l1"}, 
+                         {"C": "4.00", "solver": "liblinear", "penalty": "l1"}],
+        "KNeighbors": [{"n_neighbors": 1, "metric": "cosine"}]
+        
+    }
+}
