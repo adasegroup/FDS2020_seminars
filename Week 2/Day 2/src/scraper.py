@@ -13,12 +13,9 @@ class TextScraper(object):
         return BeautifulSoup(html_doc, "html.parser")
 
     def get_words(self, tag_to_find, label_to_get, word):
-        doc = []
-        soup_f = self.text_soup.find_all(tag_to_find)
-        for t in soup_f:
-            a = t.get(label_to_get)
-            if a is not None and (word in a or a.startswith(word)):
-                doc.append(a)
+        doc = [t.get(label_to_get)
+               for t in self.text_soup.find_all(tag_to_find)
+               if t.get(label_to_get) is not None and (word in t.get(label_to_get) or t.get(label_to_get).startswith(word))]
         return doc
 
 
@@ -33,7 +30,9 @@ class CounterWithRefactor(object):
                 continue
 
             for _str in replace_strings:
-                words = link.replace(_str, "").split(split_char)
+                words = link.replace(_str, "")
+
+            words = words.split(split_char)
 
             if split_char_2:
                 words[0] = words[0].split(split_char_2)

@@ -22,6 +22,6 @@ def plot_horizontal_bar(x, count, title, save=None,  color="#C19A6B"):
     # PLOTTING
     plt.barh(x, count, color=color)
     plt.title(title)
-    plt.xticks(np.arange(0, 18, step=2))
     if save:
         plt.savefig(save)
+    plt.close()

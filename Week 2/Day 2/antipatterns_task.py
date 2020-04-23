@@ -49,9 +49,6 @@ df_rel['brand'] = 'burberry'
 
 df_burberry = df_rel
 
-# In[2]:
-
-
 # VERSACE
 
 # CREATING LIST OF RELEVANT URLS
@@ -71,20 +68,6 @@ doc_uniq = set(doc)
 print("Number of unique items:" + str(len(doc_uniq)))
 # print(doc_uniq)
 
-result = {}
-garbage = []
-for link in doc_uniq:
-    if link.startswith("/us/en-us/women/new-arrivals/new-in/?"):
-        continue
-    words = link.replace("/us/en-us/women/new-arrivals/new-in/", "").split("/")
-    words = words[0].split("-")
-
-    for word in words:
-        if word in result:
-            result[word] += 1
-        else:
-            result[word] = 1
-
 counter = CounterWithRefactor(doc_uniq)
 result = counter.get_count(replace_strings=["/us/en-us/women/new-arrivals/new-in/"],
                            split_char="/",
@@ -101,13 +84,9 @@ plot_horizontal_bar(df_rel.index, df_rel['counts'], color="#FFD700",
                     title="Most used words in Versace 'New in' SS2020 Women collection",
                     save="SS2020_Versace_word_frequency.jpg")
 
-
 df_rel['brand'] = 'versace'
 
 df_versace = df_rel
-
-# In[3]:
-
 
 # CREATING LIST OF RELEVANT URLS
 URLS_i = []
@@ -131,15 +110,11 @@ for url in URLS_i:
 doc_uniq = set(doc)
 print("Number of unique items:" + str(len(doc_uniq)))
 
-result = {}
-for link in doc_uniq:
-    words = link.replace("Visit", "").replace(" product page", "").split(" ")
-    for word in words:
-        if word in result:
-            result[word] += 1
-        else:
-            result[word] = 1
-del (result[""])
+counter = CounterWithRefactor(doc_uniq)
+result = counter.get_count(replace_strings=["Visit", " product page"],
+                           split_char=" ",
+                           must_start_with=False,
+                           split_char_2=False)
 
 df_sorted = result2dataframe(result)
 df_rel = df_sorted[df_sorted['counts'] > 4]
@@ -148,7 +123,7 @@ df_rel = df_sorted[df_sorted['counts'] > 4]
 
 
 # PLOTTING
-plot_horizontal_bar(df_rel.index,  df_rel['counts'], color="#E0115F",
+plot_horizontal_bar(df_rel.index, df_rel['counts'], color="#E0115F",
                     title="Most used words in D&G 'New in' SS2020 Women collection",
                     save="SS2020_D&G_word_frequency.jpg")
 
@@ -156,152 +131,81 @@ df_rel['brand'] = 'd&g'
 
 df_dg = df_rel
 
-# In[22]:
-
-
 df_brands = pd.concat([df_versace.reset_index(), df_burberry.reset_index(), df_dg.reset_index()])
 
-# In[23]:
 print()
 
 # df_brands = df_brands.drop(columns=['index'])
 
-# In[24]:
-
-
 df_brands['words'] = df_brands['words'].str.upper()
-
-# In[29]:
-
-
-# In[30]:
-
 
 # integer encode
 label_encoder = LabelEncoder()
 integer_encoded = label_encoder.fit_transform(df_brands['words'])
 print(integer_encoded)
 
-# In[31]:
-
-
 # binary encode
 onehot_encoder = OneHotEncoder(sparse=False)
 integer_encoded = integer_encoded.reshape(len(integer_encoded), 1)
 onehot_encoded = onehot_encoder.fit_transform(integer_encoded)
 
-
-# In[62]:
-
-
 def brand_target(brand):
-    if 'versace' in brand:
-        val = 0
-    elif 'burberry' in brand:
-        val = 1
-    elif 'd&g' in brand:
-        val = 2
-    else:
+    if not brand in ['versace', 'burberry', 'd&g']:
         raise ValueError(f'Invalid brand: {brand}')
-    return val
+    if 'versace' in brand:
+        return 0
+    if 'burberry' in brand:
+        return 1
+    if 'd&g' in brand:
+        return 2
 
+brands_transformed = df_brands['brand'].apply(lambda x: brand_target(x))
 
-# In[63]:
-
-
-def apply_brand_loop(df):
-    brand_list = []
-    for i in range(len(df)):
-        brand = df.iloc[i]['brand']
-        target = brand_target(brand)
-        brand_list.append(target)
-    return brand_list
-
-
-# In[67]:
-
-
-brands_transformed = apply_brand_loop(df_brands.copy())
 y = brands_transformed
 
 X = onehot_encoded
 
-# In[68]:
-
-
 
 X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.33, random_state=42)
 
-# In[70]:
+
+models = {}
+
+models.update({"Baseline": DummyClassifier(random_state=391488407)})
+# models.update({"Support vector (C=1.30)": SVC(C=1.30, gamma="scale")})
+# models.update({"Support vector (C=0.45)": SVC(C=0.45, gamma="scale")})
+# models.update({"Support vector (C=4.80)": SVC(C=4.80, gamma="scale")})
+models.update({"Support vector (C=1.00)": SVC(C=1.00, gamma="scale")})
+models.update({"Support vector (C=0.25)": SVC(C=0.25, gamma="scale")})
+models.update({"Support vector (C=4.00)": SVC(C=4.00, gamma="scale")})
 
 
-models = []
+models.update({"Random Forest": RandomForestClassifier(n_estimators=100, random_state=1283220422)})
 
-# In[71]:
+models.update({"Logistic Regression (C=1.00)":
+               LogisticRegression(C=1.00, solver="liblinear", penalty="l1")})
 
+models.update({"Logistic Regression (C=0.25)":
+               LogisticRegression(C=0.25, solver="liblinear", penalty="l1")})
 
+models.update({"Logistic Regression (C=4.00)":
+               LogisticRegression(C=4.00, solver="liblinear", penalty="l1")})
 
-models.append(("Baseline", DummyClassifier(random_state=391488407)))
+models.update({"1-nn euclidean":
+               KNeighborsClassifier(n_neighbors=1)})
 
-# In[72]:
+models.update({"1-nn cosine":
+               KNeighborsClassifier(n_neighbors=1, metric="cosine")})
 
-
-
-# models.append(("Support vector (C=1.30)", SVC(C=1.30, gamma="scale")))
-# models.append(("Support vector (C=0.45)", SVC(C=0.45, gamma="scale")))
-# models.append(("Support vector (C=4.80)", SVC(C=4.80, gamma="scale")))
-models.append(("Support vector (C=1.00)", SVC(C=1.00, gamma="scale")))
-models.append(("Support vector (C=0.25)", SVC(C=0.25, gamma="scale")))
-models.append(("Support vector (C=4.00)", SVC(C=4.00, gamma="scale")))
-
-# In[73]:
-
-
-
-
-models.append(("Random Forest", RandomForestClassifier(n_estimators=100, random_state=1283220422)))
-
-models.append(("Logistic Regression (C=1.00)",
-               LogisticRegression(C=1.00, solver="liblinear", penalty="l1")))
-
-models.append(("Logistic Regression (C=0.25)",
-               LogisticRegression(C=0.25, solver="liblinear", penalty="l1")))
-
-models.append(("Logistic Regression (C=4.00)",
-               LogisticRegression(C=4.00, solver="liblinear", penalty="l1")))
-
-# In[74]:
+models.update({"5-nn cosine":
+               KNeighborsClassifier(n_neighbors=5, metric="cosine")})
 
 
 
-models.append(("1-nn euclidean",
-               KNeighborsClassifier(n_neighbors=1)))
-
-models.append(("1-nn cosine",
-               KNeighborsClassifier(n_neighbors=1, metric="cosine")))
-
-models.append(("5-nn cosine",
-               KNeighborsClassifier(n_neighbors=5, metric="cosine")))
-
-# In[75]:
-
-
-models = dict(models)
-
-# In[76]:
-
-
-for name, clf in models.items():
+for clf_key in models.keys():
+    clf = models[clf_key]
     clf.fit(X_train, y_train)
 
-# In[80]:
+scores = pd.Series({clf_name: models[clf_name].score(X_test, y_test) for clf_name in models.keys()}, name="Accuracy")
 
-
-scores = pd.Series({name: clf.score(X_test, y_test) for name, clf in models.items()}, name="Accuracy")
-
-# In[81]:
-
-
-scores
-
-# In[ ]:
+print(scores)
