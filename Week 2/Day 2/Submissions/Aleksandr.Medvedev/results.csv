@@ -1,0 +1,10 @@
+,model,accuracy
+0,Dummy{'strategy': 'prior'},0.19047619047619047
+1,"SVC{'C': 1.0, 'gamma': 'scale'}",0.14285714285714285
+2,"SVC{'C': 0.25, 'gamma': 'scale'}",0.19047619047619047
+3,"SVC{'C': 4.0, 'gamma': 'scale'}",0.14285714285714285
+4,RandomForest{'n_estimators': 100},0.14285714285714285
+5,"LogisticRegression{'C': 1.0, 'solver': 'liblinear', 'penalty': 'l1', 'multi_class': 'auto'}",0.19047619047619047
+6,"LogisticRegression{'C': 0.25, 'solver': 'liblinear', 'penalty': 'l1', 'multi_class': 'auto'}",0.19047619047619047
+7,"LogisticRegression{'C': 4.0, 'solver': 'liblinear', 'penalty': 'l1', 'multi_class': 'auto'}",0.14285714285714285
+8,"KNeighbors{'n_neighbors': 1, 'metric': 'cosine'}",0.14285714285714285
