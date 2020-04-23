@@ -7,15 +7,117 @@ import matplotlib.pyplot as plt
 from sklearn.preprocessing import OneHotEncoder
 from sklearn.preprocessing import LabelEncoder
 
+class DataDesc():
+    def __init__(self, img_title, img_name, brand_name):
+        self.img_title = img_title
+        self.img_name = img_name
+        self.brand_name = brand_name
+        
+burberry_desc = DataDesc("Most used words in Burberry 'New in' SS2020 Women collection",
+                        "SS2020_Burberry_word_frequency.jpg",
+                        'burberry')
 
-def get_data():
-    burbery_urls = [
+versace_desc = DataDesc("Most used words in Versace 'New in' SS2020 Women collection",
+                        "SS2020_Versace_word_frequency.jpg",
+                        'versace')
+
+dg_desc = DataDesc("Most used words in D&G 'New in' SS2020 Women collection",
+                   "SS2020_D&G_word_frequency.jpg",
+                   'd&g')
+
+class Data():
+    def __init__(self, desc):
+        self.desc = desc
+        
+    def plot(self, df_rel):
+        pass
+    
+    def get_docs(self):
+        pass
+    
+    def get_counts(self, doc_uniq):
+        pass
+    
+    def post_processing(self, df):
+        pass
+    
+    def prepare_data(self):
+        doc_uniq = self.get_docs()
+        print("Number of unique items: %d" % len(doc_uniq))
+        
+        result = self.get_counts(doc_uniq)
+        
+        words = list(result.keys())
+        counts = list(result.values())
+        
+        # TURNING THE DICTIONARY INTO A DATAFRAME, SORTING & SELECTING FOR RELEVANCE
+        df = pd.DataFrame.from_dict({
+            "words": words,
+            "counts": counts,
+        })
+        
+        df_rel = self.post_processing(df)
+        
+        self.plot(df_rel)
+        df_rel["brand"] = self.desc.brand_name
+        return df
+
+class BurberryData(Data):
+    def plot(self):
+        pass
+    
+    def get_docs(self):
+        burberry_urls = [
+            "https://us.burberry.com/womens-new-arrivals-new-in/",
+            "https://us.burberry.com/womens-new-arrivals-new-in/?start=2&pageSize=120&productsOffset=&cellsOffset=8&cellsLimit=&__lang=en"
+        ]
+        # SCRAPING & CREATING A LIST OF LINKS
+        doc = []
+        for url in burberry_urls:
+            r = requests.get(url)
+            html_doc = r.text
+            soup = BeautifulSoup(html_doc)
+
+            for link in soup.find_all("a"):
+                l = link.get("href")
+                if "-p80" in l: # <-- THIS WILL NEED TO CHANGE
+                    doc.append(l)
+
+        # DEDUPLICATING THE LIST OF LINKS
+        doc_uniq = set(doc)
+        return doc_uniq
+    
+    def get_counts(self, doc_uniq):
+        result = {}
+        for link in doc_uniq:
+            words = link.replace("/", "").split("-")
+            for word in words:
+                if word in result:
+                    result[word] += 1
+                else:
+                    result[word] = 1
+        return result
+    
+    def post_processing(self, df):
+        df_sorted = df.sort_values("counts", ascending = True)
+        df_rel = df_sorted[df_sorted['counts']>3]
+        return df_rel
+    
+    def plot(self, df_rel):
+        plt.barh(df_rel['words'], df_rel['counts'], color = "#C19A6B")
+        plt.title(self.desc.img_title)
+        plt.xticks(np.arange(0, 18, step=2))
+        plt.savefig(self.desc.img_name)
+
+
+def get_burberry_data():
+    burberry_urls = [
         "https://us.burberry.com/womens-new-arrivals-new-in/",
         "https://us.burberry.com/womens-new-arrivals-new-in/?start=2&pageSize=120&productsOffset=&cellsOffset=8&cellsLimit=&__lang=en"
     ]
     # SCRAPING & CREATING A LIST OF LINKS
     doc = []
-    for url in burbery_urls:
+    for url in burberry_urls:
         r = requests.get(url)
         html_doc = r.text
         soup = BeautifulSoup(html_doc)
@@ -61,10 +163,10 @@ def get_data():
     df_rel['brand']='burberry'
 
     df_burberry = df_rel
+    return df_burberry
 
 
-    # VERSACE
-
+def get_versace_data():
     # CREATING LIST OF RELEVANT URLS
     url = "https://www.versace.com/us/en-us/women/new-arrivals/new-in/"
 
@@ -111,11 +213,9 @@ def get_data():
     })
 
     df2 = df.set_index("words")
-    #df2 = df.drop(["a1008"],axis=0)
     df_sorted = df2.sort_values("counts", ascending = True)
     df_rel = df_sorted[df_sorted['counts']>2]
-    #print(df_rel.head())
-    #print(df_rel.shape) 
+
 
     #PLOTTING
     plt.barh(df_rel.index, df_rel['counts'], color = "#FFD700")
@@ -124,17 +224,17 @@ def get_data():
     df_rel['brand']='versace'
 
     df_versace = df_rel
+    return df_versace
 
 
-
+def get_dg_data():
     # CREATING LIST OF RELEVANT URLS
     urls = []
     #urls = list(urls)
-    for i in [1,2,3,4]:
-        u = str("https://us.dolcegabbana.com/en/women/highlights/new-in/?page=") + str(i)
-        urls.append(u)
+    root_url = "https://us.dolcegabbana.com/en/women/highlights/new-in/?page={page}"
+    pages = [1,2,3,4]
+    urls = [root_url.format(page=page) for page in pages]
 
-    #print(urls)
 
     # SCRAPING & CREATING A LIST OF LINKS
     doc = []
@@ -173,11 +273,8 @@ def get_data():
     })
 
     df2 = df.set_index("words")
-    #df2.drop(["", "WITH"])
     df_sorted = df2.sort_values("counts", ascending = True)
     df_rel = df_sorted[df_sorted['counts']>4]
-    #print(df_rel.head())
-    #print(df_rel.shape) 
 
 
     # PLOTTING
@@ -187,8 +284,35 @@ def get_data():
     df_rel['brand']='d&g'
 
     df_dg = df_rel
+    return df_dg
 
 
+def brand_target(brand):
+    if 'versace' in brand:
+        val = 0
+    elif 'burberry' in brand:
+        val = 1
+    elif 'd&g' in brand:
+        val = 2
+    else:
+        raise ValueError(f'Invalid brand: {brand}')
+    return val
+
+
+def apply_brand_loop(df):
+    brand_list = []
+    for i in range(len(df)):
+        brand = df.iloc[i]['brand']
+        target = brand_target(brand)
+        brand_list.append(target)
+    return brand_list
+
+
+def get_data():
+    df_burberry = get_burberry_data()
+    df_versace = get_versace_data()
+    
+    df_dg = get_dg_data()
 
     df_brands = pd.concat([df_versace.reset_index(), df_burberry.reset_index(), df_dg.reset_index()])
     df_brands = df_brands.drop(columns=['index'])
@@ -202,25 +326,6 @@ def get_data():
     onehot_encoder = OneHotEncoder(sparse=False)
     integer_encoded = integer_encoded.reshape(len(integer_encoded), 1)
     onehot_encoded = onehot_encoder.fit_transform(integer_encoded)
-
-    def brand_target(brand):
-        if 'versace' in brand:
-            val = 0
-        elif 'burberry' in brand:
-            val = 1
-        elif 'd&g' in brand:
-            val = 2
-        else:
-            raise ValueError(f'Invalid brand: {brand}')
-        return val
-
-    def apply_brand_loop(df):
-        brand_list = []
-        for i in range(len(df)):
-            brand = df.iloc[i]['brand']
-            target = brand_target(brand)
-            brand_list.append(target)
-        return brand_list
 
     brands_transformed = apply_brand_loop(df_brands.copy())
     y = brands_transformed
