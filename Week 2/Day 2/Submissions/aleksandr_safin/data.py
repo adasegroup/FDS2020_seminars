@@ -152,8 +152,6 @@ def get_burberry_data():
 
     df_sorted = df.sort_values("counts", ascending = True)
     df_rel = df_sorted[df_sorted['counts']>3]
-    print(df_rel.head())
-    print(df_rel.shape) 
 
     # PLOTTING
     plt.barh(df_rel['words'], df_rel['counts'], color = "#C19A6B")
@@ -230,7 +228,6 @@ def get_versace_data():
 def get_dg_data():
     # CREATING LIST OF RELEVANT URLS
     urls = []
-    #urls = list(urls)
     root_url = "https://us.dolcegabbana.com/en/women/highlights/new-in/?page={page}"
     pages = [1,2,3,4]
     urls = [root_url.format(page=page) for page in pages]
@@ -248,7 +245,6 @@ def get_dg_data():
             a = t.get("aria-label")
             if a != None and a.startswith("Visit"):
                 doc.append(a)
-    #print(doc)
 
     # DEDUPLICATING THE LIST OF LINKS
     doc_uniq = set(doc)
