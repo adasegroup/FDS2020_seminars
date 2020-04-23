@@ -12,9 +12,6 @@ Under the folder Day 2 you will find the ipython notebook file `antipatterns_tas
 
 With this file, your task will be the following:
 
-- Fork the repository
-- Clone the fork to your local machine
-- Under submissions, create a new folder with your name
 - Apply what you have learn over the past two weeks. This means:
     - Convert the Jupyter notebook into an actual script
     - This script should be able to be executed in the terminal
