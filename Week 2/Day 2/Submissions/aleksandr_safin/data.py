@@ -60,7 +60,7 @@ class Data():
         
         self.plot(df_rel)
         df_rel["brand"] = self.desc.brand_name
-        return df
+        return df_rel
 
 class BurberryData(Data):
     def plot(self):
@@ -110,177 +110,107 @@ class BurberryData(Data):
         plt.savefig(self.desc.img_name)
 
 
-def get_burberry_data():
-    burberry_urls = [
-        "https://us.burberry.com/womens-new-arrivals-new-in/",
-        "https://us.burberry.com/womens-new-arrivals-new-in/?start=2&pageSize=120&productsOffset=&cellsOffset=8&cellsLimit=&__lang=en"
-    ]
-    # SCRAPING & CREATING A LIST OF LINKS
-    doc = []
-    for url in burberry_urls:
-        r = requests.get(url)
-        html_doc = r.text
-        soup = BeautifulSoup(html_doc)
+class VersaceData(Data):       
+    def plot(self, df_rel):
+        plt.barh(df_rel.index, df_rel['counts'], color = "#FFD700")
+        plt.title(self.desc.img_title)
+        plt.savefig(self.desc.img_name)
+    
+    def get_docs(self):
+        # CREATING LIST OF RELEVANT URLS
+        url = "https://www.versace.com/us/en-us/women/new-arrivals/new-in/"
 
-        for link in soup.find_all("a"):
-            l = link.get("href")
-            if "-p80" in l: # <-- THIS WILL NEED TO CHANGE
-                doc.append(l)
-
-    # DEDUPLICATING THE LIST OF LINKS
-    doc_uniq = set(doc)
-    print("Number of unique items:"+str(len(doc_uniq)))
-
-    # CREATING A DICTIONARY WITH WORDS : COUNTS AND KEY : VALUE PAIRS
-    result = {}
-    for link in doc_uniq:
-        words = link.replace("/", "").split("-")
-        for word in words:
-            if word in result:
-                result[word] += 1
-            else:
-                result[word] = 1
-
-    words = list(result.keys())
-    counts = list(result.values())
-
-    # TURNING THE DICTIONARY INTO A DATAFRAME, SORTING & SELECTING FOR RELEVANCE
-    df = pd.DataFrame.from_dict({
-        "words": words,
-        "counts": counts,
-    })
-
-    df_sorted = df.sort_values("counts", ascending = True)
-    df_rel = df_sorted[df_sorted['counts']>3]
-
-    # PLOTTING
-    plt.barh(df_rel['words'], df_rel['counts'], color = "#C19A6B")
-    plt.title("Most used words in Burberry 'New in' SS2020 Women collection")
-    plt.xticks(np.arange(0, 18, step=2))
-    plt.savefig("SS2020_Burberry_word_frequency.jpg")
-    df_rel['brand']='burberry'
-
-    df_burberry = df_rel
-    return df_burberry
-
-
-def get_versace_data():
-    # CREATING LIST OF RELEVANT URLS
-    url = "https://www.versace.com/us/en-us/women/new-arrivals/new-in/"
-
-    # SCRAPING & CREATING A LIST OF LINKS
-    doc = []
-    #for url in urls:
-    r = requests.get(url)
-    html_doc = r.text
-    soup = BeautifulSoup(html_doc)
-    soup_f = soup.find_all("a")
-    for t in soup_f:
-        a = t.get("href")
-        if a.startswith("/us/en-us/women/new-arrivals/new-in/"):
-            doc.append(a)
-
-
-    # DEDUPLICATING THE LIST OF LINKS
-    doc_uniq = set(doc)
-    print("Number of unique items:"+str(len(doc_uniq)))
-    #print(doc_uniq)
-
-    result = {}
-    garbage = []
-    for link in doc_uniq:
-        if link.startswith("/us/en-us/women/new-arrivals/new-in/?"):
-            continue
-        words = link.replace("/us/en-us/women/new-arrivals/new-in/", "") .split("/")
-        words = words[0].split("-")
-
-        for word in words:
-            if word in result:
-                result[word] += 1
-            else:
-                result[word] = 1
-
-    words = list(result.keys())
-    counts = list(result.values())
-    #print(result)
-
-    # TURNING THE DICTIONARY INTO A DATAFRAME, SORTING & SELECTING FOR RELEVANCE
-    df = pd.DataFrame.from_dict({
-        "words": words,
-        "counts": counts,
-    })
-
-    df2 = df.set_index("words")
-    df_sorted = df2.sort_values("counts", ascending = True)
-    df_rel = df_sorted[df_sorted['counts']>2]
-
-
-    #PLOTTING
-    plt.barh(df_rel.index, df_rel['counts'], color = "#FFD700")
-    plt.title("Most used words in Versace 'New in' SS2020 Women collection")
-    plt.savefig("SS2020_Versace_word_frequency.jpg")
-    df_rel['brand']='versace'
-
-    df_versace = df_rel
-    return df_versace
-
-
-def get_dg_data():
-    # CREATING LIST OF RELEVANT URLS
-    urls = []
-    root_url = "https://us.dolcegabbana.com/en/women/highlights/new-in/?page={page}"
-    pages = [1,2,3,4]
-    urls = [root_url.format(page=page) for page in pages]
-
-
-    # SCRAPING & CREATING A LIST OF LINKS
-    doc = []
-    for url in urls:
+        # SCRAPING & CREATING A LIST OF LINKS
+        doc = []
+        #for url in urls:
         r = requests.get(url)
         html_doc = r.text
         soup = BeautifulSoup(html_doc)
         soup_f = soup.find_all("a")
-
         for t in soup_f:
-            a = t.get("aria-label")
-            if a != None and a.startswith("Visit"):
+            a = t.get("href")
+            if a.startswith("/us/en-us/women/new-arrivals/new-in/"):
                 doc.append(a)
 
-    # DEDUPLICATING THE LIST OF LINKS
-    doc_uniq = set(doc)
-    print("Number of unique items:"+str(len(doc_uniq)))
 
-    result = {}
-    for link in doc_uniq:
-        words = link.replace("Visit", "").replace(" product page","").split(" ")                                                                                                                                      
-        for word in words:
-            if word in result:
-                result[word] += 1
-            else:
-                result[word] = 1
-    del(result[""])
-    words = list(result.keys())
-    counts = list(result.values())
+        # DEDUPLICATING THE LIST OF LINKS
+        doc_uniq = set(doc)
+        return doc_uniq
+    
+    def get_counts(self, doc_uniq):
+        result = {}
+        garbage = []
+        for link in doc_uniq:
+            if link.startswith("/us/en-us/women/new-arrivals/new-in/?"):
+                continue
+            words = link.replace("/us/en-us/women/new-arrivals/new-in/", "") .split("/")
+            words = words[0].split("-")
 
-    # TURNING THE DICTIONARY INTO A DATAFRAME, SORTING & SELECTING FOR RELEVANCE
-    df = pd.DataFrame.from_dict({
-        "words": words,
-        "counts": counts,
-    })
+            for word in words:
+                if word in result:
+                    result[word] += 1
+                else:
+                    result[word] = 1
 
-    df2 = df.set_index("words")
-    df_sorted = df2.sort_values("counts", ascending = True)
-    df_rel = df_sorted[df_sorted['counts']>4]
+        return result
+    
+    def post_processing(self, df):
+        df2 = df.set_index("words")
+        df_sorted = df2.sort_values("counts", ascending = True)
+        df_rel = df_sorted[df_sorted['counts']>2]
+        return df_rel
 
 
-    # PLOTTING
-    plt.barh(df_rel.index, df_rel['counts'], color = "#E0115F")
-    plt.title("Most used words in D&G 'New in' SS2020 Women collection")
-    plt.savefig("SS2020_D&G_word_frequency.jpg", pad_inches=0.1)
-    df_rel['brand']='d&g'
+class DgData(Data):
+    def __init__(self, desc):
+        self.desc = desc
+        
+    def plot(self, df_rel):
+        plt.barh(df_rel.index, df_rel['counts'], color = "#E0115F")
+        plt.title(self.desc.img_title)
+        plt.savefig(self.desc.img_name, pad_inches=0.1)
+    
+    def get_docs(self):
+        # CREATING LIST OF RELEVANT URLS
+        root_url = "https://us.dolcegabbana.com/en/women/highlights/new-in/?page={page}"
+        pages = [1,2,3,4]
+        urls = [root_url.format(page=page) for page in pages]
 
-    df_dg = df_rel
-    return df_dg
+
+        # SCRAPING & CREATING A LIST OF LINKS
+        doc = []
+        for url in urls:
+            r = requests.get(url)
+            html_doc = r.text
+            soup = BeautifulSoup(html_doc)
+            soup_f = soup.find_all("a")
+
+            for t in soup_f:
+                a = t.get("aria-label")
+                if a != None and a.startswith("Visit"):
+                    doc.append(a)
+
+        # DEDUPLICATING THE LIST OF LINKS
+        doc_uniq = set(doc)
+        return doc_uniq
+    
+    def get_counts(self, doc_uniq):
+        result = {}
+        for link in doc_uniq:
+            words = link.replace("Visit", "").replace(" product page","").split(" ")                                                                                                                                      
+            for word in words:
+                if word in result:
+                    result[word] += 1
+                else:
+                    result[word] = 1
+        del(result[""])
+        return result
+    
+    def post_processing(self, df):
+        df2 = df.set_index("words")
+        df_sorted = df2.sort_values("counts", ascending = True)
+        df_rel = df_sorted[df_sorted['counts']>4]
+        return df_rel
 
 
 def brand_target(brand):
@@ -305,10 +235,9 @@ def apply_brand_loop(df):
 
 
 def get_data():
-    df_burberry = get_burberry_data()
-    df_versace = get_versace_data()
-    
-    df_dg = get_dg_data()
+    df_burberry = BurberryData(burberry_desc).prepare_data() 
+    df_versace =  VersaceData(versace_desc).prepare_data() 
+    df_dg = DgData(dg_desc).prepare_data()
 
     df_brands = pd.concat([df_versace.reset_index(), df_burberry.reset_index(), df_dg.reset_index()])
     df_brands = df_brands.drop(columns=['index'])
