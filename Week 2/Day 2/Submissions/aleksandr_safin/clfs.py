@@ -9,7 +9,6 @@ class ModelDisc():
     def __init__(self, name, model):
         self.name = name
         self.model = model
-    
 
 def create_models(models_disc):
     models = []

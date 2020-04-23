@@ -2,6 +2,8 @@ import argparse
 from main import main
 
 def set_args(parser):
+    parser.add_argument('--C', default=1., type=float,
+                        help="regularizer coefficient")
     parser.add_argument('--test_size', type=float,
                         default=0.33, help='test size for data train/test split')
     parser.add_argument('--random_state', type=int,
