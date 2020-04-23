@@ -36,4 +36,5 @@ With this file, your task will be the following:
     - Remember to include a meaningful comment
 - Do a pull-request in Git
 - You will have **90 minutes** for this task. The submission corresponds to the time stamp of the pull-request
+- The quiz lasts 90 minutes and you will have an additional 10 minutes to submit the hash. This quiz closes at 17:10 23/04/2020
 - Your solution will be discussed in class
