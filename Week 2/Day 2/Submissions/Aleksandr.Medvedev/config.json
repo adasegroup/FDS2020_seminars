@@ -1,0 +1,35 @@
+{
+    "brands": {
+            "versace": {
+                "urls": ["https://www.versace.com/us/en-us/women/new-arrivals/new-in/"],
+		"relevance_threshold": 2
+            },
+            "d&g": {
+		"urls": [
+                    "https://us.dolcegabbana.com/en/women/highlights/new-in/?page=1",
+        	    "https://us.dolcegabbana.com/en/women/highlights/new-in/?page=2",
+	            "https://us.dolcegabbana.com/en/women/highlights/new-in/?page=3",
+                    "https://us.dolcegabbana.com/en/women/highlights/new-in/?page=4"
+            	],
+		"relevance_threshold": 4
+	    },
+            "burberry": {
+	        "urls": [
+                    "https://us.burberry.com/womens-new-arrivals-new-in/",
+                    "https://us.burberry.com/womens-new-arrivals-new-in/?start=2&pageSize=120&productsOffset=&cellsOffset=8&cellsLimit=&__lang=en"
+                ],
+		"relevance_threshold": 3
+	    }
+    },
+    "models": {
+        "Dummy": [{"strategy": "prior"}],
+        "SVC": [{"C": 1.00, "gamma": "scale"},
+                {"C": 0.25, "gamma": "scale"},
+                {"C": 4.00, "gamma": "scale"}],
+        "RandomForest": [{"n_estimators": 100}],
+        "LogisticRegression": [{"C": 1.00, "solver": "liblinear", "penalty": "l1", "multi_class": "auto"},
+                         {"C": 0.25, "solver": "liblinear", "penalty": "l1", "multi_class": "auto"},
+                         {"C": 4.00, "solver": "liblinear", "penalty": "l1", "multi_class": "auto"}],
+        "KNeighbors": [{"n_neighbors": 1, "metric": "cosine"}]
+    }
+}
