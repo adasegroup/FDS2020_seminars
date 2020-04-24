@@ -1,0 +1,12 @@
+,Accuracy
+Baseline,0.5333333333333333
+Support vector (C=1.00),0.4666666666666667
+Support vector (C=0.25),0.4666666666666667
+Support vector (C=4.00),0.4666666666666667
+"Random Forest, N estimator = 100",0.4666666666666667
+Logistic Regression (C=1.00),0.4666666666666667
+Logistic Regression (C=0.25),0.4666666666666667
+Logistic Regression (C=4.00),0.4666666666666667
+1-nn euclidean,0.4666666666666667
+1-nn cosine,0.4666666666666667
+5-nn cosine,0.4666666666666667
