@@ -8,7 +8,7 @@ from sklearn.neighbors import KNeighborsClassifier
 from sklearn.svm import SVC
 
 
-from src import CounterWithRefactor, TextScraper
+from Submissions.samir.src import CounterWithRefactor, TextScraper
 
 
 def result2dataframe(result):
